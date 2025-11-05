@@ -6,6 +6,62 @@ import type { GameState } from './gameLogic';
 // カスタムフック
 // ========================================
 
+// レスポンシブスケール管理
+const useResponsiveScale = () => {
+  const [scale, setScale] = useState(1);
+  const [availableWidth, setAvailableWidth] = useState(CONFIG.SCREEN_WIDTH);
+  const [availableHeight, setAvailableHeight] = useState(CONFIG.SCREEN_HEIGHT);
+
+  useEffect(() => {
+    const updateScale = () => {
+      // パディングとボタンエリアを考慮した利用可能な領域を計算
+      // p-2.5 = 10px, さらにマージンを考慮
+      const horizontalPadding = 20;
+      const buttonAreaHeight = 120; // ボタンエリアの高さ（余裕を持たせる）
+      
+      const maxWidth = Math.max(200, window.innerWidth - horizontalPadding);
+      const maxHeight = Math.max(300, window.innerHeight - horizontalPadding - buttonAreaHeight);
+      
+      // アスペクト比を維持しながらスケールを計算
+      const widthScale = maxWidth / CONFIG.SCREEN_WIDTH;
+      const heightScale = maxHeight / CONFIG.SCREEN_HEIGHT;
+      // 小さい方のスケールを使用（画面に収まるように）
+      const newScale = Math.min(widthScale, heightScale);
+      
+      // 最小スケールと最大スケールを設定
+      // 最小0.5倍（極端に小さくならないように）
+      // 最大2.5倍（極端に大きくなりすぎないように）
+      const finalScale = Math.max(0.5, Math.min(2.5, newScale));
+      
+      setScale(finalScale);
+      setAvailableWidth(CONFIG.SCREEN_WIDTH * finalScale);
+      setAvailableHeight(CONFIG.SCREEN_HEIGHT * finalScale);
+    };
+
+    updateScale();
+    
+    // リサイズイベントに少し遅延を入れて、リサイズ完了後に計算
+    let resizeTimeout: number;
+    const handleResize = () => {
+      clearTimeout(resizeTimeout);
+      resizeTimeout = window.setTimeout(updateScale, 100);
+    };
+
+    window.addEventListener('resize', handleResize);
+    window.addEventListener('orientationchange', () => {
+      window.setTimeout(updateScale, 200); // オリエンテーション変更後は少し長めに待つ
+    });
+
+    return () => {
+      clearTimeout(resizeTimeout);
+      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('orientationchange', updateScale);
+    };
+  }, []);
+
+  return { scale, availableWidth, availableHeight };
+};
+
 // キーボード入力管理
 const useKeyboardInput = (onRestart: () => void, isGameOver: boolean) => {
   const keysRef = useRef<{ [key: string]: boolean }>({});
@@ -97,29 +153,33 @@ const useTouchControls = () => {
 // ========================================
 
 // コース行コンポーネント
-const CourseRow = memo(({ row, rowIndex }: { row: string[], rowIndex: number }) => {
+const CourseRow = memo(({ row, rowIndex, scale }: { row: string[], rowIndex: number, scale: number }) => {
+  const cellSize = CONFIG.CELL_SIZE * scale;
+  const fontSize = Math.max(16, 40 * scale); // 最小フォントサイズを設定
+
   // セル要素をメモ化
   const cells = useMemo(() => 
     row.map((char, colIndex) => (
       <div
         key={`${rowIndex}-${colIndex}`}
-        className="bg-white flex items-center justify-center text-5xl font-mono"
+        className="bg-white flex items-center justify-center font-mono"
         style={{
-          width: `${CONFIG.CELL_SIZE}px`,
-          height: `${CONFIG.CELL_SIZE}px`,
+          width: `${cellSize}px`,
+          height: `${cellSize}px`,
+          fontSize: `${fontSize}px`,
           color: char === "■" ? '#000' : '#fff',
         }}
       >
         {char === "■" ? "■" : "　"}
       </div>
-    )), [row, rowIndex]
+    )), [row, rowIndex, cellSize, fontSize]
   );
 
   // 行のスタイルをメモ化
   const rowStyle = useMemo(() => ({
-    top: `${rowIndex * CONFIG.CELL_SIZE}px`,
-    height: `${CONFIG.CELL_SIZE}px`,
-  }), [rowIndex]);
+    top: `${rowIndex * cellSize}px`,
+    height: `${cellSize}px`,
+  }), [rowIndex, cellSize]);
 
   return (
     <div 
@@ -132,18 +192,22 @@ const CourseRow = memo(({ row, rowIndex }: { row: string[], rowIndex: number }) 
 });
 
 // プレイヤーコンポーネント
-const Player = memo(({ x, row }: { x: number, row: number }) => {
+const Player = memo(({ x, row, scale }: { x: number, row: number, scale: number }) => {
+  const cellSize = CONFIG.CELL_SIZE * scale;
+  const fontSize = Math.max(12, 24 * scale); // 最小フォントサイズを設定
+
   // プレイヤーのスタイルをメモ化
   const playerStyle = useMemo(() => ({
-    left: `${x * CONFIG.CELL_SIZE}px`,
-    top: `${row * CONFIG.CELL_SIZE}px`,
-    width: `${CONFIG.CELL_SIZE}px`,
-    height: `${CONFIG.CELL_SIZE}px`,
-  }), [x, row]);
+    left: `${x * cellSize}px`,
+    top: `${row * cellSize}px`,
+    width: `${cellSize}px`,
+    height: `${cellSize}px`,
+    fontSize: `${fontSize}px`,
+  }), [x, row, cellSize, fontSize]);
 
   return (
     <div
-      className="absolute flex items-center justify-center text-2xl font-mono text-black z-10"
+      className="absolute flex items-center justify-center font-mono text-black z-10"
       style={playerStyle}
     >
       車
@@ -152,9 +216,21 @@ const Player = memo(({ x, row }: { x: number, row: number }) => {
 });
 
 // スコア表示コンポーネント
-const ScoreDisplay = memo(({ distance }: { distance: number }) => {
+const ScoreDisplay = memo(({ distance, scale }: { distance: number, scale: number }) => {
+  const fontSize = Math.max(12, 16 * scale);
+  const padding = Math.max(4, 8 * scale);
+  const margin = Math.max(4, 8 * scale);
+
   return (
-    <div className="absolute top-2 left-2 bg-white border border-black px-1 py-0.5 text-base text-black font-mono z-20">
+    <div 
+      className="absolute bg-white border border-black text-black font-mono z-20"
+      style={{
+        top: `${margin}px`,
+        left: `${margin}px`,
+        padding: `${padding / 2}px ${padding}px`,
+        fontSize: `${fontSize}px`,
+      }}
+    >
       距離: {distance}
     </div>
   );
@@ -163,19 +239,36 @@ const ScoreDisplay = memo(({ distance }: { distance: number }) => {
 // ゲームオーバー画面コンポーネント
 const GameOverScreen = memo(({ 
   distance, 
-  onRestart 
+  onRestart,
+  scale
 }: { 
   distance: number, 
-  onRestart: () => void 
+  onRestart: () => void,
+  scale: number
 }) => {
+  const titleFontSize = Math.max(16, 20 * scale);
+  const baseFontSize = Math.max(12, 16 * scale);
+  const smallFontSize = Math.max(10, 14 * scale);
+  const padding = Math.max(8, 20 * scale);
+  const margin = Math.max(8, 20 * scale);
+
   return (
-    <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center text-black font-mono z-30">
-      <div className="text-xl mb-2.5">ゲームオーバー</div>
-      <div className="text-base mb-5">最終距離: {distance}</div>
-      <div className="text-sm mb-5">Rキーでリスタート</div>
+    <div 
+      className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center text-black font-mono z-30"
+      style={{
+        fontSize: `${baseFontSize}px`,
+      }}
+    >
+      <div style={{ fontSize: `${titleFontSize}px`, marginBottom: `${margin}px` }}>ゲームオーバー</div>
+      <div style={{ marginBottom: `${margin}px` }}>最終距離: {distance}</div>
+      <div style={{ fontSize: `${smallFontSize}px`, marginBottom: `${margin}px` }}>Rキーでリスタート</div>
       <button
         onClick={onRestart}
-        className="bg-black text-white border-none px-5 py-2.5 text-base font-mono rounded cursor-pointer hover:bg-gray-800 transition-colors"
+        className="bg-black text-white border-none font-mono rounded cursor-pointer hover:bg-gray-800 transition-colors"
+        style={{
+          padding: `${padding / 2}px ${padding}px`,
+          fontSize: `${baseFontSize}px`,
+        }}
       >
         リスタート
       </button>
@@ -186,25 +279,49 @@ const GameOverScreen = memo(({
 // コントロールボタンコンポーネント
 const ControlButtons = memo(({ 
   onLeftPress, 
-  onRightPress 
+  onRightPress,
+  scale,
+  maxWidth
 }: { 
   onLeftPress: () => void, 
-  onRightPress: () => void 
+  onRightPress: () => void,
+  scale: number,
+  maxWidth: number
 }) => {
+  const buttonSize = Math.max(40, 60 * scale);
+  const fontSize = Math.max(16, 24 * scale);
+  const margin = Math.max(8, 20 * scale);
+  const padding = Math.max(8, 20 * scale);
+
   return (
     <div 
-      className="flex justify-between items-center w-full mt-5 px-5 mb-5"
-      style={{ maxWidth: `${CONFIG.SCREEN_WIDTH}px` }}
+      className="flex justify-between items-center w-full mb-5"
+      style={{ 
+        maxWidth: `${maxWidth}px`,
+        marginTop: `${margin}px`,
+        paddingLeft: `${padding}px`,
+        paddingRight: `${padding}px`,
+      }}
     >
       <button
         onClick={onLeftPress}
-        className="bg-black text-white border-none w-15 h-15 rounded-full text-xl font-mono cursor-pointer flex items-center justify-center flex-shrink-0 hover:bg-gray-800 transition-colors active:scale-95"
+        className="bg-black text-white border-none rounded-full font-mono cursor-pointer flex items-center justify-center flex-shrink-0 hover:bg-gray-800 transition-colors active:scale-95"
+        style={{
+          width: `${buttonSize}px`,
+          height: `${buttonSize}px`,
+          fontSize: `${fontSize}px`,
+        }}
       >
         ←
       </button>
       <button
         onClick={onRightPress}
-        className="bg-black text-white border-none w-15 h-15 rounded-full text-xl font-mono cursor-pointer flex items-center justify-center flex-shrink-0 hover:bg-gray-800 transition-colors active:scale-95"
+        className="bg-black text-white border-none rounded-full font-mono cursor-pointer flex items-center justify-center flex-shrink-0 hover:bg-gray-800 transition-colors active:scale-95"
+        style={{
+          width: `${buttonSize}px`,
+          height: `${buttonSize}px`,
+          fontSize: `${fontSize}px`,
+        }}
       >
         →
       </button>
@@ -217,12 +334,14 @@ const GameScreen = memo(({
   courseRows, 
   playerX, 
   playerRow, 
-  distance 
+  distance,
+  scale
 }: { 
   courseRows: string[][], 
   playerX: number, 
   playerRow: number, 
-  distance: number 
+  distance: number,
+  scale: number
 }) => {
 
   const memoizedCourseRows = useMemo(() => 
@@ -230,9 +349,10 @@ const GameScreen = memo(({
       <CourseRow 
         key={index} 
         row={row} 
-        rowIndex={index} 
+        rowIndex={index}
+        scale={scale}
       />
-    )), [courseRows]
+    )), [courseRows, scale]
   );
 
   return (
@@ -240,8 +360,8 @@ const GameScreen = memo(({
       <div className="relative w-full h-full">
         {memoizedCourseRows}
       </div>
-      <Player x={playerX} row={playerRow} />
-      <ScoreDisplay distance={distance} />
+      <Player x={playerX} row={playerRow} scale={scale} />
+      <ScoreDisplay distance={distance} scale={scale} />
     </>
   );
 });
@@ -256,6 +376,9 @@ function App() {
     initialState.courseRows = [];
     return initialState;
   });
+
+  // レスポンシブスケールを取得
+  const { scale, availableWidth, availableHeight } = useResponsiveScale();
 
   const handleRestart = useCallback(() => {
     const newState = createInitialGameState();
@@ -282,10 +405,11 @@ function App() {
   return (
     <div className="flex flex-col justify-start items-center min-h-screen h-screen p-2.5 bg-white font-mono box-border">
       <div 
-        className="w-full bg-white border border-black relative overflow-hidden"
+        className="bg-white border border-black relative overflow-hidden"
         style={{
-          maxWidth: `${CONFIG.SCREEN_WIDTH}px`,
-          height: `${CONFIG.SCREEN_HEIGHT}px`,
+          width: `${availableWidth}px`,
+          height: `${availableHeight}px`,
+          maxWidth: '100%',
         }}
       >
         {!gameState.gameOver ? (
@@ -294,11 +418,13 @@ function App() {
             playerX={gameState.playerX}
             playerRow={gameState.playerRow}
             distance={gameState.scrollOffset}
+            scale={scale}
           />
         ) : (
           <GameOverScreen
             distance={gameState.scrollOffset}
             onRestart={handleRestart}
+            scale={scale}
           />
         )}
       </div>
@@ -306,6 +432,8 @@ function App() {
       <ControlButtons
         onLeftPress={pressLeft}
         onRightPress={pressRight}
+        scale={scale}
+        maxWidth={availableWidth}
       />
     </div>
   );
