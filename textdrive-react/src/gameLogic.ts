@@ -112,7 +112,7 @@ const handleInput = (state: GameState, keys: { [key: string]: boolean }): GameSt
 // スクロール処理
 // ========================
 const handleScroll = (state: GameState): GameState => {
-  let newState = { ...state, scrollTimer: state.scrollTimer + 1 };
+  const newState = { ...state, scrollTimer: state.scrollTimer + 1 };
 
   if (newState.scrollTimer < CONFIG.SCROLL_SPEED) return newState;
   newState.scrollTimer = 0;

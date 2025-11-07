@@ -154,7 +154,7 @@ class CourseComponent:
 
 
 class PlayerComponent:
-    """プレイヤー描画コンポーネント"""
+    """Player rendering component"""
 
     def __init__(self, screen, font):
         self.screen = screen
@@ -166,14 +166,14 @@ class PlayerComponent:
 
 
 class UIComponent:
-    """UI描画コンポーネント"""
+    """Heads-up display component"""
 
     def __init__(self, screen, font):
         self.screen = screen
         self.font = font
 
     def render(self, scroll_offset: int):
-        score_text = self.font.render(f"距離: {scroll_offset}", True, (0, 0, 0))
+        score_text = self.font.render(f"Distance: {scroll_offset}", True, (0, 0, 0))
         text_rect = score_text.get_rect()
 
         pygame.draw.rect(
@@ -188,7 +188,7 @@ class UIComponent:
 
 
 class GameOverComponent:
-    """ゲームオーバー描画コンポーネント"""
+    """Game over overlay component"""
 
     def __init__(self, screen, font):
         self.screen = screen
@@ -196,9 +196,9 @@ class GameOverComponent:
 
     def render(self, scroll_offset: int):
         texts = [
-            ("ゲームオーバー", SCREEN_HEIGHT // 2 - 40),
-            (f"最終距離: {scroll_offset}", SCREEN_HEIGHT // 2 - 10),
-            ("Rキーでリスタート", SCREEN_HEIGHT // 2 + 20),
+            ("Game Over", SCREEN_HEIGHT // 2 - 40),
+            (f"Final Distance: {scroll_offset}", SCREEN_HEIGHT // 2 - 10),
+            ("Press R to restart", SCREEN_HEIGHT // 2 + 20),
         ]
 
         for text, y in texts:
@@ -211,11 +211,11 @@ class GameOverComponent:
 
 # Main App Component
 class App:
-    """メインアプリケーション"""
+    """Main application"""
 
     def __init__(self):
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-        pygame.display.set_caption("文字だけドライブゲーム")
+        pygame.display.set_caption("TextDrive - ASCII-Only Driving Game")
 
         try:
             font = pygame.font.Font(
