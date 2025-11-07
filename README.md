@@ -21,8 +21,8 @@ TextDrive is a minimalist driving game where the entire course is drawn with ASC
 Clone the repository:
 
 ```bash
-git clone https://github.com/yukiharada1228/TextDrive.git
-cd TextDrive
+git clone https://github.com/yukiharada1228/text-drive.git
+cd text-drive
 ```
 
 ### React Edition (Recommended)
