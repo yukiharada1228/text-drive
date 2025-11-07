@@ -1,137 +1,143 @@
-# TextDrive - 文字だけドライブゲーム
+# TextDrive - ASCII-Only Driving Game
 
-シンプルなドライブゲームです。文字だけで構成されたコースを車で走り抜けます。
+TextDrive is a minimalist driving game where the entire course is drawn with ASCII blocks. Steer the car through the gaps and see how far you can go without crashing.
 
-## プロジェクト構成
+## Project Structure
 
-- **React版** (`textdrive-react/`): React + TypeScript + Tailwind CSSで実装したWeb版（メイン）
-- **Python版** (`main.py`): React風のコンポーネント設計でリファクタリングされたpygameゲーム
+- **React Edition (`textdrive-react/`)**: Web implementation built with React, TypeScript, and Tailwind CSS (primary target)
+- **Python Edition (`main.py`)**: pygame version refactored with a React-style component architecture
 
-## ゲームの特徴
+## Game Features
 
-- 文字（■）で構成されたコース
-- キーボード（矢印キー）またはタッチボタンで車を操作
-- 壁にぶつかるとゲームオーバー
-- 距離を競うシンプルなゲーム
-- モバイル対応（タッチコントロール付き）
-- コンポーネントベースの設計
+- Courses made entirely of the `■` character
+- Control the car with arrow keys or on-screen touch buttons
+- Colliding with a wall ends the run
+- Distance-based scoring for pick-up-and-play sessions
+- Mobile-friendly layout with responsive scaling
+- Component-driven architecture for easy customization
 
-## インストール方法
+## Getting Started
 
-1. リポジトリをクローン
+Clone the repository:
+
 ```bash
 git clone https://github.com/yukiharada1228/TextDrive.git
 cd TextDrive
 ```
 
-### React版の実行（推奨）
+### React Edition (Recommended)
 
-2. Reactアプリの依存関係をインストール
+Install dependencies:
+
 ```bash
 cd textdrive-react
 npm install
 ```
 
-3. 開発サーバーを起動
+Start the development server:
+
 ```bash
 npm run dev
 ```
 
-ブラウザで `http://localhost:5173` を開いてゲームをプレイできます。
+Open `http://localhost:5173` in your browser to play.
 
-4. 本番ビルド
+Create a production build:
+
 ```bash
 npm run build
 ```
 
-### Python版の実行
+### Python Edition
 
-2. 依存関係をインストール
+Install dependencies:
+
 ```bash
 uv sync
 ```
 
-3. ゲームを実行
+Run the game:
+
 ```bash
 uv run main.py
 ```
 
-## デプロイ
+## Deployment
 
-このプロジェクトはVercelでデプロイされています。
+The project is deployed on Vercel.
 
-- **本番環境**: [https://text-drive.vercel.app/](https://text-drive.vercel.app/)
+- **Production**: [https://text-drive.vercel.app/](https://text-drive.vercel.app/)
 
-Web版のゲームは上記のURLから直接プレイできます。
+Play the browser version directly at the URL above.
 
-## 開発環境
+## Development Environment
 
-- **Node.js**: 18.x以上
-- **Python**: 3.12以上
-- **パッケージマネージャー**: 
-  - Python版: `uv`
-  - React版: `npm`
+- **Node.js**: 18.x or newer
+- **Python**: 3.12 or newer
+- **Package managers**:
+  - Python edition: `uv`
+  - React edition: `npm`
 
-## 操作方法
+## Controls
 
-### Web版（React）
-- **キーボード操作**:
-  - 左矢印キー: 左に移動
-  - 右矢印キー: 右に移動
-  - Rキー: ゲームオーバー時にリスタート
-- **タッチ操作**:
-  - 左ボタン: 左に移動
-  - 右ボタン: 右に移動
-  - リスタートボタン: ゲームオーバー時にリスタート
+### Web (React)
+- **Keyboard**
+  - Left Arrow: Move left
+  - Right Arrow: Move right
+  - `R`: Restart after game over
+- **Touch**
+  - Left button: Move left
+  - Right button: Move right
+  - Restart button: Restart after game over
 
-### Python版
-- 左矢印キー: 左に移動
-- 右矢印キー: 右に移動
-- Rキー: ゲームオーバー時にリスタート
+### Python
+- Left Arrow: Move left
+- Right Arrow: Move right
+- `R`: Restart after game over
 
-## ゲームのルール
+## Rules
 
-- 黒い四角（■）は壁で、ぶつかるとゲームオーバー
-- 空白部分を通って進みます
-- ゲーム開始時は空のコースから始まり、徐々にブロックが生成されます
-- できるだけ長い距離を走り抜けましょう
+- Black squares (`■`) are walls—hitting one ends the run
+- Follow the gaps to advance
+- The course starts empty and gradually spawns new rows
+- Push for the longest distance possible
 
-## 技術仕様
+## Technical Notes
 
-### Python版 (main.py)
-- **フレームワーク**: pygame
-- **アーキテクチャ**: React風のコンポーネント設計
-- **主要コンポーネント**:
-  - `GameState`: ゲーム状態管理（Reactのstateに相当）
-  - `CourseComponent`: コース描画コンポーネント
-  - `PlayerComponent`: プレイヤー描画コンポーネント
-  - `UIComponent`: UI描画コンポーネント
-  - `GameOverComponent`: ゲームオーバー画面コンポーネント
-  - `App`: メインアプリケーションクラス
-- **カスタムフック**:
-  - `use_scroll()`: スクロール処理
-  - `use_input()`: 入力処理
-- **純粋関数**:
-  - `generate_course_row()`: コース行生成（固定パターン方式）
-  - `check_collision()`: 衝突判定
+### Python Edition (`main.py`)
+- **Framework**: pygame
+- **Architecture**: React-inspired component system
+- **Key components**:
+  - `GameState`: State container similar to React state
+  - `CourseComponent`: Renders the ASCII course
+  - `PlayerComponent`: Renders the player car
+  - `UIComponent`: Handles in-game HUD
+  - `GameOverComponent`: Displays the end screen
+  - `App`: Main application orchestrator
+- **Custom hooks**:
+  - `use_scroll()`: Scroll management
+  - `use_input()`: Keyboard handling
+- **Pure functions**:
+  - `generate_course_row()`: Creates new course rows
+  - `check_collision()`: Collision detection
 
-### React版 (textdrive-react/)
-- **フレームワーク**: React 19 + TypeScript
-- **ビルドツール**: Vite (rolldown-vite)
-- **スタイリング**: Tailwind CSS v4
-- **状態管理**: React Hooks (useState, useEffect, useCallback, useRef, useMemo)
-- **アーキテクチャ**: コンポーネントベース設計 + メモ化最適化
-- **主要コンポーネント**:
-  - `App`: メインアプリケーションコンポーネント
-  - `GameScreen`: ゲーム画面コンポーネント
-  - `CourseRow`: コース行描画コンポーネント（メモ化）
-  - `Player`: プレイヤー描画コンポーネント（メモ化）
-  - `ScoreDisplay`: スコア表示コンポーネント（メモ化）
-  - `GameOverScreen`: ゲームオーバー画面コンポーネント（メモ化）
-  - `ControlButtons`: タッチコントロールボタンコンポーネント（メモ化）
-- **カスタムフック**:
-  - `useKeyboardInput`: キーボード入力管理
-  - `useGameLoop`: ゲームループ管理
-  - `useTouchControls`: タッチコントロール管理
-- **ゲームロジック**: `gameLogic.ts`で分離された純粋関数群
-- **パフォーマンス最適化**: React.memo、useMemo、useCallbackを活用
+### React Edition (`textdrive-react/`)
+- **Framework**: React 19 + TypeScript
+- **Build tool**: Vite (rolldown)
+- **Styling**: Tailwind CSS v4
+- **State management**: React Hooks (`useState`, `useEffect`, `useCallback`, `useRef`, `useMemo`)
+- **Architecture**: Component-based design with memoization
+- **Key components**:
+  - `App`: Main application wrapper
+  - `GameScreen`: Layout of the main playfield
+  - `CourseRow`: Renders each ASCII row (memoized)
+  - `Player`: Renders the car (memoized)
+  - `ScoreDisplay`: Shows distance (memoized)
+  - `GameOverScreen`: End-of-run overlay (memoized)
+  - `ControlButtons`: On-screen controls (memoized)
+- **Custom hooks**:
+  - `useKeyboardInput`: Keyboard event handling
+  - `useGameLoop`: Frame timing and updates
+  - `useTouchControls`: Touch button interactions
+- **Game logic**: Pure functions in `gameLogic.ts`
+- **Performance**: Heavy use of `React.memo`, `useMemo`, and `useCallback`

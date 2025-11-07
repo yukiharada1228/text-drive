@@ -231,7 +231,7 @@ const ScoreDisplay = memo(({ distance, scale }: { distance: number, scale: numbe
         fontSize: `${fontSize}px`,
       }}
     >
-      距離: {distance}
+      Distance: {distance}
     </div>
   );
 });
@@ -259,9 +259,9 @@ const GameOverScreen = memo(({
         fontSize: `${baseFontSize}px`,
       }}
     >
-      <div style={{ fontSize: `${titleFontSize}px`, marginBottom: `${margin}px` }}>ゲームオーバー</div>
-      <div style={{ marginBottom: `${margin}px` }}>最終距離: {distance}</div>
-      <div style={{ fontSize: `${smallFontSize}px`, marginBottom: `${margin}px` }}>Rキーでリスタート</div>
+      <div style={{ fontSize: `${titleFontSize}px`, marginBottom: `${margin}px` }}>Game Over</div>
+      <div style={{ marginBottom: `${margin}px` }}>Final Distance: {distance}</div>
+      <div style={{ fontSize: `${smallFontSize}px`, marginBottom: `${margin}px` }}>Press R to restart</div>
       <button
         onClick={onRestart}
         className="bg-black text-white border-none font-mono rounded cursor-pointer hover:bg-gray-800 transition-colors"
@@ -270,7 +270,7 @@ const GameOverScreen = memo(({
           fontSize: `${baseFontSize}px`,
         }}
       >
-        リスタート
+        Restart
       </button>
     </div>
   );
