@@ -98,20 +98,13 @@ const useGameLoop = (
   keysRef: React.RefObject<{ [key: string]: boolean }>
 ) => {
   const gameStateRef = useRef<GameState>(gameState);
-  const lastTimeRef = useRef<number>(0);
 
   useEffect(() => {
     gameStateRef.current = gameState;
   }, [gameState]);
 
   useEffect(() => {
-    const gameLoop = (currentTime: number) => {
-      if (currentTime - lastTimeRef.current < 1000 / CONFIG.FPS) {
-        requestAnimationFrame(gameLoop);
-        return;
-      }
-      
-      lastTimeRef.current = currentTime;
+    const gameLoop = () => {
       const currentState = gameStateRef.current;
 
       if (!currentState.gameOver) {
