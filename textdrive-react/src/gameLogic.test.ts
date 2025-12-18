@@ -54,7 +54,7 @@ describe('gameLogic', () => {
     })
 
     it('should move player left when ArrowLeft is pressed', () => {
-      // keyTimerが0でないと移動できないので、まず更新が必要
+      // keyTimer must be 0 to move, so update is needed first
       const state = { ...initialState, keyTimer: 0 }
       const updatedState = updateGameState(state, { ArrowLeft: true })
 
@@ -105,7 +105,7 @@ describe('gameLogic', () => {
       const updatedState = updateGameState(state, { ArrowLeft: true })
 
       expect(updatedState.keyTimer).toBe(2)
-      expect(updatedState.playerX).toBe(state.playerX) // プレイヤーは移動しない
+      expect(updatedState.playerX).toBe(state.playerX) // Player does not move
     })
 
     it('should increment scrollTimer on each update', () => {
@@ -125,39 +125,39 @@ describe('gameLogic', () => {
     })
 
     it('should set gameOver to true when player collides with wall', () => {
-      // プレイヤーが壁に突っ込むシナリオ
+      // Scenario where player crashes into wall
       const courseRow = ['■', '■', '■', '■', ' ', ' ', ' ', '■', '■']
       const state: GameState = {
         ...initialState,
-        playerX: 4, // 空白の位置
+        playerX: 4, // Empty space position
         playerRow: 0,
         courseRows: [courseRow],
         keyTimer: 0,
       }
 
-      // 左に移動すると playerX = 3 になり、これは '■' (壁)
+      // Moving left makes playerX = 3, which is '■' (wall)
       const updatedState = updateGameState(state, { ArrowLeft: true })
 
       expect(updatedState.gameOver).toBe(true)
     })
 
     it('should set gameOver to true when wall scrolls into player position', () => {
-      // Math.randomをモックして確定的なパターンを生成
-      vi.spyOn(Math, 'random').mockReturnValue(0.1) // -1が返される（0.1 * 3 = 0.3 -> floor = 0 -> 0 - 1 = -1）
+      // Mock Math.random to generate deterministic pattern
+      vi.spyOn(Math, 'random').mockReturnValue(0.1) // Returns -1 (0.1 * 3 = 0.3 -> floor = 0 -> 0 - 1 = -1)
 
       const state: GameState = {
         ...initialState,
-        playerX: 0, // 壁が来る位置
-        playerRow: 0, // 新しい行が来る位置
+        playerX: 0, // Position where wall will appear
+        playerRow: 0, // Position where new row appears
         scrollTimer: CONFIG.SCROLL_SPEED - 1,
-        currentPattern: 0, // 次のパターンは11 "■■   ■■■■"、playerX=0は壁
+        currentPattern: 0, // Next pattern is 11 "■■   ■■■■", playerX=0 is wall
       }
 
-      // スクロールを発生させる
+      // Trigger scroll
       const updatedState = updateGameState(state, {})
 
-      // playerX=0, playerRow=0 に壁がスクロールで来たらゲームオーバー
-      // currentPattern=0から-1でパターン11 "■■   ■■■■"、index 0は壁
+      // Game over when wall scrolls to playerX=0, playerRow=0
+      // currentPattern=0 to -1 gives pattern 11 "■■   ■■■■", index 0 is wall
       expect(updatedState.gameOver).toBe(true)
     })
 
@@ -168,7 +168,7 @@ describe('gameLogic', () => {
         scrollTimer: CONFIG.SCROLL_SPEED - 1,
       }
 
-      // 何度もスクロールさせる
+      // Scroll many times
       let updatedState = state
       for (let i = 0; i < rows + 10; i++) {
         updatedState = { ...updatedState, scrollTimer: CONFIG.SCROLL_SPEED - 1 }
@@ -182,13 +182,13 @@ describe('gameLogic', () => {
       const state = { ...initialState, keyTimer: 0 }
       const updatedState = updateGameState(state, { ArrowLeft: true, ArrowRight: true })
 
-      // ArrowRightが優先されるので、右に移動
+      // ArrowRight is prioritized, so move right
       expect(updatedState.playerX).toBe(state.playerX + 1)
       expect(updatedState.keyTimer).toBe(CONFIG.KEY_REPEAT_DELAY)
     })
 
     it('should update currentPattern when scrolling', () => {
-      vi.spyOn(Math, 'random').mockReturnValue(0.4) // 0が返される（0.4 * 3 = 1.2 -> floor = 1 -> 1 - 1 = 0）
+      vi.spyOn(Math, 'random').mockReturnValue(0.4) // Returns 0 (0.4 * 3 = 1.2 -> floor = 1 -> 1 - 1 = 0)
 
       const state: GameState = {
         ...initialState,
@@ -198,7 +198,7 @@ describe('gameLogic', () => {
 
       const updatedState = updateGameState(state, {})
 
-      // currentPatternが5から5に変わる（change = 0）
+      // currentPattern changes from 5 to 5 (change = 0)
       expect(updatedState.currentPattern).toBe(5)
       expect(updatedState.courseRows.length).toBe(1)
     })
@@ -212,35 +212,35 @@ describe('gameLogic', () => {
 
       const updatedState = updateGameState(state, { ArrowLeft: true })
 
-      // keyTimerが減少し、プレイヤーは移動しない
+      // keyTimer decreases, player does not move
       expect(updatedState.keyTimer).toBe(1)
       expect(updatedState.playerX).toBe(state.playerX)
-      // スクロールは発生する
+      // Scroll occurs
       expect(updatedState.scrollTimer).toBe(0)
       expect(updatedState.courseRows.length).toBe(1)
     })
 
     it('should handle multiple frames correctly', () => {
-      vi.spyOn(Math, 'random').mockReturnValue(0.8) // +1が返される（0.8 * 3 = 2.4 -> floor = 2 -> 2 - 1 = 1）
+      vi.spyOn(Math, 'random').mockReturnValue(0.8) // Returns +1 (0.8 * 3 = 2.4 -> floor = 2 -> 2 - 1 = 1)
 
       let state = createInitialGameState()
 
-      // 5フレーム分の更新をシミュレート
+      // Simulate 5 frames of updates
       for (let i = 0; i < 5; i++) {
         state = updateGameState(state, {})
       }
 
-      // scrollTimerが5増加
+      // scrollTimer increased by 5
       expect(state.scrollTimer).toBe(5)
-      expect(state.courseRows.length).toBe(0) // まだSCROLL_SPEEDに達していない
+      expect(state.courseRows.length).toBe(0) // Not yet reached SCROLL_SPEED
       expect(state.scrollOffset).toBe(0)
 
-      // さらに5フレーム更新して、ちょうどSCROLL_SPEEDに到達
+      // Update 5 more frames to reach SCROLL_SPEED
       for (let i = 0; i < 5; i++) {
         state = updateGameState(state, {})
       }
 
-      // スクロールが1回発生（合計10フレーム）
+      // Scroll occurs once (total 10 frames)
       expect(state.scrollTimer).toBe(0)
       expect(state.courseRows.length).toBe(1)
       expect(state.scrollOffset).toBe(1)
@@ -255,7 +255,7 @@ describe('gameLogic', () => {
 
       const updatedState = updateGameState(state, { ArrowLeft: true })
 
-      // courseRowsが空でも移動できる（衝突しない）
+      // Can move even when courseRows is empty (no collision)
       expect(updatedState.playerX).toBe(state.playerX - 1)
       expect(updatedState.gameOver).toBe(false)
     })

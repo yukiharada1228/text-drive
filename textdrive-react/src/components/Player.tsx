@@ -9,9 +9,9 @@ interface PlayerProps {
 
 export const Player = memo(({ x, row, scale }: PlayerProps) => {
   const cellSize = CONFIG.CELL_SIZE * scale;
-  const fontSize = Math.max(12, 24 * scale); // 最小フォントサイズを設定
+  const fontSize = Math.max(12, 24 * scale); // Set minimum font size
 
-  // プレイヤーのスタイルをメモ化
+  // Memoize player style
   const playerStyle = useMemo(() => ({
     left: `${x * cellSize}px`,
     top: `${row * cellSize}px`,
