@@ -1,5 +1,5 @@
 // ========================
-// ゲーム定数
+// Game Constants
 // ========================
 export const CONFIG = {
   SCREEN_WIDTH: 360,
@@ -14,7 +14,7 @@ export const CONFIG = {
 const ROWS = Math.floor(CONFIG.SCREEN_HEIGHT / CONFIG.CELL_SIZE);
 
 // ========================
-// コースパターン
+// Course Patterns
 // ========================
 const COURSE_PATTERNS = [
   "■■■   ■■■",
@@ -32,7 +32,7 @@ const COURSE_PATTERNS = [
 ];
 
 // ========================
-// 型定義
+// Type Definitions
 // ========================
 export interface GameState {
   playerX: number;
@@ -46,7 +46,7 @@ export interface GameState {
 }
 
 // ========================
-// ユーティリティ
+// Utilities
 // ========================
 const nextPatternIndex = (current: number): number => {
   const change = Math.floor(Math.random() * 3) - 1; // -1, 0, +1
@@ -57,7 +57,7 @@ const rowFromPattern = (patternIndex: number): string[] =>
   COURSE_PATTERNS[patternIndex].split("");
 
 // ========================
-// コース生成
+// Course Generation
 // ========================
 const generateNewRow = (currentPattern: number): { row: string[]; newPattern: number } => {
   const newPattern = nextPatternIndex(currentPattern);
@@ -65,7 +65,7 @@ const generateNewRow = (currentPattern: number): { row: string[]; newPattern: nu
 };
 
 // ========================
-// 当たり判定
+// Collision Detection
 // ========================
 const checkCollision = (x: number, row: number, courseRows: string[][]): boolean => {
   if (row >= courseRows.length || x < 0 || x >= courseRows[row].length) return false;
@@ -73,7 +73,7 @@ const checkCollision = (x: number, row: number, courseRows: string[][]): boolean
 };
 
 // ========================
-// 初期状態
+// Initial State
 // ========================
 export const createInitialGameState = (): GameState => ({
   playerX: Math.floor(CONFIG.COLS / 2),
@@ -87,7 +87,7 @@ export const createInitialGameState = (): GameState => ({
 });
 
 // ========================
-// 入力処理
+// Input Handling
 // ========================
 const handleInput = (state: GameState, keys: { [key: string]: boolean }): GameState => {
   if (state.keyTimer > 0) return { ...state, keyTimer: state.keyTimer - 1 };
@@ -99,7 +99,7 @@ const handleInput = (state: GameState, keys: { [key: string]: boolean }): GameSt
   if (dx === 0) return state;
 
   const newX = state.playerX + dx;
-  if (newX < 0 || newX >= CONFIG.COLS) return state; // 画面外
+  if (newX < 0 || newX >= CONFIG.COLS) return state; // Out of bounds
 
   const newState = { ...state, playerX: newX, keyTimer: CONFIG.KEY_REPEAT_DELAY };
   if (checkCollision(newX, newState.playerRow, newState.courseRows)) {
@@ -109,7 +109,7 @@ const handleInput = (state: GameState, keys: { [key: string]: boolean }): GameSt
 };
 
 // ========================
-// スクロール処理
+// Scroll Handling
 // ========================
 const handleScroll = (state: GameState): GameState => {
   const newState = { ...state, scrollTimer: state.scrollTimer + 1 };
@@ -130,7 +130,7 @@ const handleScroll = (state: GameState): GameState => {
 };
 
 // ========================
-// ゲーム更新
+// Game Update
 // ========================
 export const updateGameState = (currentState: GameState, keys: { [key: string]: boolean }): GameState => {
   if (currentState.gameOver) return currentState;

@@ -9,9 +9,9 @@ interface CourseRowProps {
 
 export const CourseRow = memo(({ row, rowIndex, scale }: CourseRowProps) => {
   const cellSize = CONFIG.CELL_SIZE * scale;
-  const fontSize = Math.max(16, 40 * scale); // 最小フォントサイズを設定
+  const fontSize = Math.max(16, 40 * scale); // Set minimum font size
 
-  // セル要素をメモ化
+  // Memoize cell elements
   const cells = useMemo(() =>
     row.map((char, colIndex) => (
       <div
@@ -29,7 +29,7 @@ export const CourseRow = memo(({ row, rowIndex, scale }: CourseRowProps) => {
     )), [row, rowIndex, cellSize, fontSize]
   );
 
-  // 行のスタイルをメモ化
+  // Memoize row style
   const rowStyle = useMemo(() => ({
     top: `${rowIndex * cellSize}px`,
     height: `${cellSize}px`,

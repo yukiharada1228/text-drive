@@ -16,7 +16,7 @@ function App() {
     return initialState;
   });
 
-  // レスポンシブスケールを取得
+  // Get responsive scale
   const { scale, availableWidth, availableHeight } = useResponsiveScale();
 
   const handleRestart = useCallback(() => {
@@ -25,20 +25,20 @@ function App() {
     setGameState(newState);
   }, []);
 
-  // キーボード入力管理
+  // Keyboard input management
   const keyboardKeysRef = useKeyboardInput(handleRestart, gameState.gameOver);
 
-  // タッチコントロール管理
+  // Touch control management
   const { keysRef: touchKeysRef, pressLeft, pressRight } = useTouchControls();
 
-  // 両方の入力を統合
+  // Combine both inputs
   const combinedKeysRef = useRef<{ [key: string]: boolean }>({});
 
   useEffect(() => {
     Object.assign(combinedKeysRef.current, keyboardKeysRef.current, touchKeysRef.current);
   });
 
-  // ゲームループ
+  // Game loop
   useGameLoop(gameState, setGameState, combinedKeysRef);
 
   return (
