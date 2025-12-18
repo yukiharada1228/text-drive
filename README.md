@@ -1,143 +1,229 @@
-# TextDrive - ASCII-Only Driving Game
+# TextDrive - ASCII-Based Driving Game
 
-TextDrive is a minimalist driving game where the entire course is drawn with ASCII blocks. Steer the car through the gaps and see how far you can go without crashing.
+TextDrive is a minimalist driving game where the entire course is drawn with ASCII blocks. Navigate your car (車) through the scrolling course by avoiding walls (■) and see how far you can go!
 
-## Project Structure
+## 🎮 Live Demo
 
-- **React Edition (`textdrive-react/`)**: Web implementation built with React, TypeScript, and Tailwind CSS (primary target)
-- **Python Edition (`main.py`)**: pygame version refactored with a React-style component architecture
+Play the game now: **[https://text-drive.vercel.app/](https://text-drive.vercel.app/)**
 
-## Game Features
+## ✨ Features
 
-- Courses made entirely of the `■` character
-- Control the car with arrow keys or on-screen touch buttons
-- Colliding with a wall ends the run
-- Distance-based scoring for pick-up-and-play sessions
-- Mobile-friendly layout with responsive scaling
-- Component-driven architecture for easy customization
+- 🎯 **ASCII Art Graphics**: Courses made entirely with the `■` character
+- 🎮 **Simple Controls**: Arrow keys or on-screen touch buttons
+- 📱 **Mobile-Friendly**: Responsive design that scales to any screen size
+- ⌨️ **Multiple Input Methods**: Full keyboard and touch support
+- 🧪 **Well Tested**: 37 comprehensive tests with 100% pass rate
+- 🎨 **Clean Architecture**: Modular components and custom hooks
+- 🚀 **Fast Performance**: Built with Vite and optimized with React.memo
+- 📊 **Distance Scoring**: Track your best run
 
-## Getting Started
+## 🛠️ Tech Stack
 
-Clone the repository:
+- **Frontend Framework**: React 19.1
+- **Language**: TypeScript 5.9
+- **Build Tool**: Vite 7.2
+- **Styling**: Tailwind CSS 4.1
+- **Testing**: Vitest 4.0 + React Testing Library
+- **Code Quality**: ESLint 9.36
+- **Deployment**: Vercel
 
-```bash
-git clone https://github.com/yukiharada1228/text-drive.git
-cd text-drive
+## 📁 Project Structure
+
+```
+text-drive/
+├── textdrive-react/          # React web application
+│   ├── src/
+│   │   ├── hooks/            # Custom React hooks
+│   │   │   ├── useResponsiveScale.ts
+│   │   │   ├── useKeyboardInput.ts
+│   │   │   ├── useGameLoop.ts
+│   │   │   └── useTouchControls.ts
+│   │   ├── components/       # UI components
+│   │   │   ├── CourseRow.tsx
+│   │   │   ├── Player.tsx
+│   │   │   ├── ScoreDisplay.tsx
+│   │   │   ├── GameOverScreen.tsx
+│   │   │   ├── ControlButtons.tsx
+│   │   │   └── GameScreen.tsx
+│   │   ├── App.tsx           # Main application
+│   │   ├── gameLogic.ts      # Pure game logic
+│   │   └── test/             # Test configuration
+│   └── public/               # Static assets
+├── create_favicon.py         # Favicon generation script
+└── pyproject.toml            # Python dependencies (for favicon generation)
 ```
 
-### React Edition (Recommended)
+## 🚀 Getting Started
 
-Install dependencies:
+### Prerequisites
 
+- Node.js 18 or higher
+- npm or yarn
+
+### Installation
+
+1. Clone the repository:
 ```bash
-cd textdrive-react
+git clone https://github.com/yukiharada1228/text-drive.git
+cd text-drive/textdrive-react
+```
+
+2. Install dependencies:
+```bash
 npm install
 ```
 
-Start the development server:
-
+3. Start the development server:
 ```bash
 npm run dev
 ```
 
-Open `http://localhost:5173` in your browser to play.
+4. Open `http://localhost:5173` in your browser to play
+
+### Building for Production
 
 Create a production build:
-
 ```bash
 npm run build
 ```
 
-### Python Edition
+Preview the production build:
+```bash
+npm run preview
+```
 
-Install dependencies:
+## 🎯 How to Play
+
+### Objective
+Drive your car (車) as far as possible without hitting the walls (■).
+
+### Controls
+
+**Keyboard:**
+- `←` or `ArrowLeft` - Move left
+- `→` or `ArrowRight` - Move right
+- `R` - Restart (when game over)
+
+**Touch:**
+- Tap the `←` button to move left
+- Tap the `→` button to move right
+- Tap the `Restart` button when game over
+
+### Game Rules
+
+1. Your car automatically scrolls forward
+2. Avoid hitting the walls (■)
+3. The course pattern changes dynamically as you progress
+4. Your score is based on the distance traveled
+5. Game ends when you hit a wall
+
+## 🧪 Testing
+
+The project includes comprehensive tests covering:
+
+- **Game Logic**: 21 unit tests for core game mechanics
+- **Components**: 16 integration tests for React components
+- **Total Coverage**: 37 tests with 100% pass rate
+
+Run tests:
+```bash
+npm test
+```
+
+Run tests with UI:
+```bash
+npm run test:ui
+```
+
+Generate coverage report:
+```bash
+npm run test:coverage
+```
+
+## 📜 Available Scripts
+
+In the `textdrive-react/` directory:
+
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run preview` - Preview production build
+- `npm run lint` - Run ESLint
+- `npm test` - Run tests
+- `npm run test:ui` - Run tests with UI
+- `npm run test:coverage` - Run tests with coverage report
+
+## 🏗️ Architecture Highlights
+
+### Custom Hooks
+- **useResponsiveScale**: Handles responsive scaling across different screen sizes
+- **useKeyboardInput**: Manages keyboard event listeners and input state
+- **useGameLoop**: Controls the game loop using requestAnimationFrame
+- **useTouchControls**: Handles touch input for mobile devices
+
+### Components
+All components are memoized using `React.memo` for optimal performance:
+- **GameScreen**: Renders the active game state
+- **GameOverScreen**: Shows game over message and restart button
+- **CourseRow**: Renders individual course rows with memoized cells
+- **Player**: Renders the player character
+- **ScoreDisplay**: Shows current distance
+- **ControlButtons**: Touch control interface
+
+### Game Logic
+Pure functions in `gameLogic.ts` handling:
+- Course generation with randomized patterns
+- Collision detection
+- Input processing
+- Scroll management
+- State updates
+
+## 🌐 Browser Support
+
+- Chrome (latest)
+- Firefox (latest)
+- Safari (latest)
+- Edge (latest)
+- Mobile browsers (iOS Safari, Chrome Mobile)
+
+## 🔧 Development Tools
+
+### Favicon Generation
+
+The project includes a Python script to generate the favicon:
 
 ```bash
+# Install Python dependencies using uv
 uv sync
+
+# Generate favicon
+uv run create_favicon.py
 ```
 
-Run the game:
+The script creates a favicon with the car character (車) using the same font as the game.
 
-```bash
-uv run main.py
-```
+## 📝 License
 
-## Deployment
+This project is open source and available under the MIT License.
 
-The project is deployed on Vercel.
+## 🤝 Contributing
 
-- **Production**: [https://text-drive.vercel.app/](https://text-drive.vercel.app/)
+Contributions are welcome! Please feel free to submit a Pull Request.
 
-Play the browser version directly at the URL above.
+### Development Guidelines
 
-## Development Environment
+1. Follow the existing code style
+2. Write tests for new features
+3. Ensure all tests pass before submitting
+4. Update documentation as needed
 
-- **Node.js**: 18.x or newer
-- **Python**: 3.12 or newer
-- **Package managers**:
-  - Python edition: `uv`
-  - React edition: `npm`
+## 🙏 Acknowledgments
 
-## Controls
+- Built with [React](https://react.dev/)
+- Powered by [Vite](https://vitejs.dev/)
+- Styled with [Tailwind CSS](https://tailwindcss.com/)
+- Tested with [Vitest](https://vitest.dev/)
+- Deployed on [Vercel](https://vercel.com/)
 
-### Web (React)
-- **Keyboard**
-  - Left Arrow: Move left
-  - Right Arrow: Move right
-  - `R`: Restart after game over
-- **Touch**
-  - Left button: Move left
-  - Right button: Move right
-  - Restart button: Restart after game over
+## 📧 Contact
 
-### Python
-- Left Arrow: Move left
-- Right Arrow: Move right
-- `R`: Restart after game over
-
-## Rules
-
-- Black squares (`■`) are walls—hitting one ends the run
-- Follow the gaps to advance
-- The course starts empty and gradually spawns new rows
-- Push for the longest distance possible
-
-## Technical Notes
-
-### Python Edition (`main.py`)
-- **Framework**: pygame
-- **Architecture**: React-inspired component system
-- **Key components**:
-  - `GameState`: State container similar to React state
-  - `CourseComponent`: Renders the ASCII course
-  - `PlayerComponent`: Renders the player car
-  - `UIComponent`: Handles in-game HUD
-  - `GameOverComponent`: Displays the end screen
-  - `App`: Main application orchestrator
-- **Custom hooks**:
-  - `use_scroll()`: Scroll management
-  - `use_input()`: Keyboard handling
-- **Pure functions**:
-  - `generate_course_row()`: Creates new course rows
-  - `check_collision()`: Collision detection
-
-### React Edition (`textdrive-react/`)
-- **Framework**: React 19 + TypeScript
-- **Build tool**: Vite (rolldown)
-- **Styling**: Tailwind CSS v4
-- **State management**: React Hooks (`useState`, `useEffect`, `useCallback`, `useRef`, `useMemo`)
-- **Architecture**: Component-based design with memoization
-- **Key components**:
-  - `App`: Main application wrapper
-  - `GameScreen`: Layout of the main playfield
-  - `CourseRow`: Renders each ASCII row (memoized)
-  - `Player`: Renders the car (memoized)
-  - `ScoreDisplay`: Shows distance (memoized)
-  - `GameOverScreen`: End-of-run overlay (memoized)
-  - `ControlButtons`: On-screen controls (memoized)
-- **Custom hooks**:
-  - `useKeyboardInput`: Keyboard event handling
-  - `useGameLoop`: Frame timing and updates
-  - `useTouchControls`: Touch button interactions
-- **Game logic**: Pure functions in `gameLogic.ts`
-- **Performance**: Heavy use of `React.memo`, `useMemo`, and `useCallback`
+If you have any questions or suggestions, feel free to open an issue on GitHub.
