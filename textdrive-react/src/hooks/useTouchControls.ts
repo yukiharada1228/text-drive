@@ -7,14 +7,14 @@ export const useTouchControls = () => {
     keysRef.current['left'] = true;
     setTimeout(() => {
       keysRef.current['left'] = false;
-    }, 100);
+    }, 50);
   }, []);
 
   const pressRight = useCallback(() => {
     keysRef.current['right'] = true;
     setTimeout(() => {
       keysRef.current['right'] = false;
-    }, 100);
+    }, 50);
   }, []);
 
   return { keysRef, pressLeft, pressRight };
