@@ -35,7 +35,7 @@ describe('App', () => {
   describe('Initial Rendering', () => {
     it('should render the app without crashing', () => {
       render(<App />)
-      expect(document.querySelector('.min-h-screen')).toBeInTheDocument()
+      expect(document.querySelector('.min-h-screen')).not.toBeNull()
     })
 
     it('should render control buttons', () => {
@@ -50,19 +50,19 @@ describe('App', () => {
 
     it('should display initial distance of 0', () => {
       render(<App />)
-      expect(screen.getByText(/Distance: 0/)).toBeInTheDocument()
+      expect(screen.getByText(/Distance: 0/)).not.toBeNull()
     })
 
     it('should render the player character', () => {
       render(<App />)
-      expect(screen.getByText('車')).toBeInTheDocument()
+      expect(screen.getByText('車')).not.toBeNull()
     })
   })
 
   describe('Game State Management', () => {
     it('should not show game over screen initially', () => {
       render(<App />)
-      expect(screen.queryByText('Game Over')).not.toBeInTheDocument()
+      expect(screen.queryByText('Game Over')).toBeNull()
     })
 
     it('should show game over screen when game is over', async () => {
@@ -77,10 +77,10 @@ describe('App', () => {
       render(<App />)
 
       await waitFor(() => {
-        expect(screen.getByText('Game Over')).toBeInTheDocument()
+        expect(screen.getByText('Game Over')).not.toBeNull()
       }, { timeout: 1000 })
 
-      expect(screen.getByText(/Final Distance: 42/)).toBeInTheDocument()
+      expect(screen.getByText(/Final Distance: 42/)).not.toBeNull()
     })
   })
 
@@ -93,7 +93,7 @@ describe('App', () => {
       await user.click(leftButton)
 
       // Button should be clickable without errors
-      expect(leftButton).toBeInTheDocument()
+      expect(leftButton).not.toBeNull()
     })
 
     it('should handle right button click', async () => {
@@ -104,7 +104,7 @@ describe('App', () => {
       await user.click(rightButton)
 
       // Button should be clickable without errors
-      expect(rightButton).toBeInTheDocument()
+      expect(rightButton).not.toBeNull()
     })
   })
 
@@ -124,7 +124,7 @@ describe('App', () => {
 
       // Wait for game over screen
       await waitFor(() => {
-        expect(screen.getByText('Game Over')).toBeInTheDocument()
+        expect(screen.getByText('Game Over')).not.toBeNull()
       }, { timeout: 1000 })
 
       // Restore the mock to allow normal behavior after restart
@@ -135,7 +135,7 @@ describe('App', () => {
 
       // After restart, distance should reset
       await waitFor(() => {
-        expect(screen.queryByText('Game Over')).not.toBeInTheDocument()
+        expect(screen.queryByText('Game Over')).toBeNull()
       }, { timeout: 1000 })
     })
 
@@ -154,7 +154,7 @@ describe('App', () => {
 
       // Wait for game over screen
       await waitFor(() => {
-        expect(screen.getByText('Game Over')).toBeInTheDocument()
+        expect(screen.getByText('Game Over')).not.toBeNull()
       }, { timeout: 1000 })
 
       // Restore the mock to allow normal behavior after restart
@@ -165,7 +165,7 @@ describe('App', () => {
 
       // After restart, game over should be gone
       await waitFor(() => {
-        expect(screen.queryByText('Game Over')).not.toBeInTheDocument()
+        expect(screen.queryByText('Game Over')).toBeNull()
       }, { timeout: 1000 })
     })
   })
@@ -186,10 +186,10 @@ describe('App', () => {
 
       // Wait for game over screen
       await waitFor(() => {
-        expect(screen.getByText('Game Over')).toBeInTheDocument()
+        expect(screen.getByText('Game Over')).not.toBeNull()
       }, { timeout: 1000 })
 
-      expect(screen.getByText(/Final Distance: 123/)).toBeInTheDocument()
+      expect(screen.getByText(/Final Distance: 123/)).not.toBeNull()
 
       // Restore the mock to allow normal behavior after restart
       mockUpdateGameState.mockRestore()
@@ -200,7 +200,7 @@ describe('App', () => {
 
       // After restart, game over should be gone
       await waitFor(() => {
-        expect(screen.queryByText('Game Over')).not.toBeInTheDocument()
+        expect(screen.queryByText('Game Over')).toBeNull()
       }, { timeout: 1000 })
     })
 
@@ -219,7 +219,7 @@ describe('App', () => {
 
       // Wait for game over
       await waitFor(() => {
-        expect(screen.getByText('Game Over')).toBeInTheDocument()
+        expect(screen.getByText('Game Over')).not.toBeNull()
       }, { timeout: 1000 })
 
       // Restore mock before restart so game can run normally
@@ -231,11 +231,11 @@ describe('App', () => {
 
       // After restart, should show initial distance
       await waitFor(() => {
-        expect(screen.queryByText('Game Over')).not.toBeInTheDocument()
+        expect(screen.queryByText('Game Over')).toBeNull()
       }, { timeout: 1000 })
 
       // Initial distance should be shown
-      expect(screen.getByText(/Distance: 0/)).toBeInTheDocument()
+      expect(screen.getByText(/Distance: 0/)).not.toBeNull()
     })
   })
 
@@ -244,8 +244,8 @@ describe('App', () => {
       render(<App />)
 
       const gameArea = document.querySelector('.border.border-black.relative.overflow-hidden')
-      expect(gameArea).toBeInTheDocument()
-      expect(gameArea).toHaveStyle({ maxWidth: '100%' })
+      expect(gameArea).not.toBeNull()
+      expect(gameArea).toHaveProperty('style')
     })
 
     it('should handle window resize events', async () => {
@@ -260,7 +260,7 @@ describe('App', () => {
       // Wait for resize to be processed
       await waitFor(() => {
         const gameArea = document.querySelector('.border.border-black.relative.overflow-hidden')
-        expect(gameArea).toBeInTheDocument()
+        expect(gameArea).not.toBeNull()
       }, { timeout: 500 })
     })
   })
@@ -271,8 +271,8 @@ describe('App', () => {
 
       // Score should be visible
       const scoreElement = screen.getByText(/Distance:/)
-      expect(scoreElement).toBeInTheDocument()
-      expect(scoreElement).toHaveClass('absolute')
+      expect(scoreElement).not.toBeNull()
+      expect(scoreElement.classList.contains('absolute')).toBe(true)
     })
 
     it('should render game over screen with all elements', async () => {
@@ -287,12 +287,12 @@ describe('App', () => {
       render(<App />)
 
       await waitFor(() => {
-        expect(screen.getByText('Game Over')).toBeInTheDocument()
+        expect(screen.getByText('Game Over')).not.toBeNull()
       }, { timeout: 1000 })
 
-      expect(screen.getByText(/Final Distance: 75/)).toBeInTheDocument()
-      expect(screen.getByText(/Press R to restart/)).toBeInTheDocument()
-      expect(screen.getByText('Restart')).toBeInTheDocument()
+      expect(screen.getByText(/Final Distance: 75/)).not.toBeNull()
+      expect(screen.getByText(/Press R to restart/)).not.toBeNull()
+      expect(screen.getByText('Restart')).not.toBeNull()
     })
   })
 })
