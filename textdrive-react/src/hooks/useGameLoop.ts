@@ -8,7 +8,7 @@ export const useGameLoop = (
   keysRef: React.RefObject<{ [key: string]: boolean }>
 ) => {
   const gameStateRef = useRef<GameState>(gameState);
-  const lastTimeRef = useRef<number>(performance.now());
+  const lastTimeRef = useRef<number>(0);
 
   useEffect(() => {
     gameStateRef.current = gameState;

@@ -90,7 +90,7 @@ export const createInitialGameState = (): GameState => ({
 // Input Handling
 // ========================
 const handleInput = (state: GameState, keys: { [key: string]: boolean }, deltaTime: number): GameState => {
-  let newKeyTimer = state.keyTimer - deltaTime;
+  const newKeyTimer = state.keyTimer - deltaTime;
   if (newKeyTimer > 0) return { ...state, keyTimer: newKeyTimer };
 
   let dx = 0;
