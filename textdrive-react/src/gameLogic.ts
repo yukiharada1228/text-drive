@@ -7,8 +7,8 @@ export const CONFIG = {
   CELL_SIZE: 40,
   COLS: 9,
   FPS: 60,
-  SCROLL_SPEED: 10,
-  KEY_REPEAT_DELAY: 5,
+  SCROLL_SPEED: 166.67, // milliseconds (10 frames at 60fps = 10/60 * 1000)
+  KEY_REPEAT_DELAY: 83.33, // milliseconds (5 frames at 60fps = 5/60 * 1000)
 };
 
 const ROWS = Math.floor(CONFIG.SCREEN_HEIGHT / CONFIG.CELL_SIZE);
@@ -89,14 +89,15 @@ export const createInitialGameState = (): GameState => ({
 // ========================
 // Input Handling
 // ========================
-const handleInput = (state: GameState, keys: { [key: string]: boolean }): GameState => {
-  if (state.keyTimer > 0) return { ...state, keyTimer: state.keyTimer - 1 };
+const handleInput = (state: GameState, keys: { [key: string]: boolean }, deltaTime: number): GameState => {
+  let newKeyTimer = state.keyTimer - deltaTime;
+  if (newKeyTimer > 0) return { ...state, keyTimer: newKeyTimer };
 
   let dx = 0;
   if (keys["ArrowLeft"] || keys["left"]) dx = -1;
   if (keys["ArrowRight"] || keys["right"]) dx = 1;
 
-  if (dx === 0) return state;
+  if (dx === 0) return { ...state, keyTimer: Math.max(0, newKeyTimer) };
 
   const newX = state.playerX + dx;
   if (newX < 0 || newX >= CONFIG.COLS) return state; // Out of bounds
@@ -111,11 +112,11 @@ const handleInput = (state: GameState, keys: { [key: string]: boolean }): GameSt
 // ========================
 // Scroll Handling
 // ========================
-const handleScroll = (state: GameState): GameState => {
-  const newState = { ...state, scrollTimer: state.scrollTimer + 1 };
+const handleScroll = (state: GameState, deltaTime: number): GameState => {
+  const newState = { ...state, scrollTimer: state.scrollTimer + deltaTime };
 
   if (newState.scrollTimer < CONFIG.SCROLL_SPEED) return newState;
-  newState.scrollTimer = 0;
+  newState.scrollTimer = newState.scrollTimer - CONFIG.SCROLL_SPEED;
 
   const { row, newPattern } = generateNewRow(newState.currentPattern);
   newState.currentPattern = newPattern;
@@ -132,10 +133,10 @@ const handleScroll = (state: GameState): GameState => {
 // ========================
 // Game Update
 // ========================
-export const updateGameState = (currentState: GameState, keys: { [key: string]: boolean }): GameState => {
+export const updateGameState = (currentState: GameState, keys: { [key: string]: boolean }, deltaTime: number): GameState => {
   if (currentState.gameOver) return currentState;
 
-  let newState = handleInput(currentState, keys);
-  newState = handleScroll(newState);
+  let newState = handleInput(currentState, keys, deltaTime);
+  newState = handleScroll(newState, deltaTime);
   return newState;
 };

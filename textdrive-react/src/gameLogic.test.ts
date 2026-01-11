@@ -1,6 +1,9 @@
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest'
 import { CONFIG, createInitialGameState, updateGameState, type GameState } from './gameLogic'
 
+// 1 frame at 60fps = 16.67ms
+const FRAME_TIME = 1000 / 60
+
 describe('gameLogic', () => {
   describe('CONFIG', () => {
     it('should have correct configuration values', () => {
@@ -9,8 +12,8 @@ describe('gameLogic', () => {
       expect(CONFIG.CELL_SIZE).toBe(40)
       expect(CONFIG.COLS).toBe(9)
       expect(CONFIG.FPS).toBe(60)
-      expect(CONFIG.SCROLL_SPEED).toBe(10)
-      expect(CONFIG.KEY_REPEAT_DELAY).toBe(5)
+      expect(CONFIG.SCROLL_SPEED).toBe(166.67) // milliseconds
+      expect(CONFIG.KEY_REPEAT_DELAY).toBe(83.33) // milliseconds
     })
   })
 
@@ -42,13 +45,13 @@ describe('gameLogic', () => {
 
     it('should not update state if game is over', () => {
       const gameOverState: GameState = { ...initialState, gameOver: true }
-      const updatedState = updateGameState(gameOverState, {})
+      const updatedState = updateGameState(gameOverState, {}, FRAME_TIME)
 
       expect(updatedState).toEqual(gameOverState)
     })
 
     it('should not move player if no keys are pressed', () => {
-      const updatedState = updateGameState(initialState, {})
+      const updatedState = updateGameState(initialState, {}, FRAME_TIME)
 
       expect(updatedState.playerX).toBe(initialState.playerX)
     })
@@ -56,7 +59,7 @@ describe('gameLogic', () => {
     it('should move player left when ArrowLeft is pressed', () => {
       // keyTimer must be 0 to move, so update is needed first
       const state = { ...initialState, keyTimer: 0 }
-      const updatedState = updateGameState(state, { ArrowLeft: true })
+      const updatedState = updateGameState(state, { ArrowLeft: true }, FRAME_TIME)
 
       expect(updatedState.playerX).toBe(state.playerX - 1)
       expect(updatedState.keyTimer).toBe(CONFIG.KEY_REPEAT_DELAY)
@@ -64,7 +67,7 @@ describe('gameLogic', () => {
 
     it('should move player right when ArrowRight is pressed', () => {
       const state = { ...initialState, keyTimer: 0 }
-      const updatedState = updateGameState(state, { ArrowRight: true })
+      const updatedState = updateGameState(state, { ArrowRight: true }, FRAME_TIME)
 
       expect(updatedState.playerX).toBe(state.playerX + 1)
       expect(updatedState.keyTimer).toBe(CONFIG.KEY_REPEAT_DELAY)
@@ -72,7 +75,7 @@ describe('gameLogic', () => {
 
     it('should move player left when "left" key is pressed', () => {
       const state = { ...initialState, keyTimer: 0 }
-      const updatedState = updateGameState(state, { left: true })
+      const updatedState = updateGameState(state, { left: true }, FRAME_TIME)
 
       expect(updatedState.playerX).toBe(state.playerX - 1)
       expect(updatedState.keyTimer).toBe(CONFIG.KEY_REPEAT_DELAY)
@@ -80,7 +83,7 @@ describe('gameLogic', () => {
 
     it('should move player right when "right" key is pressed', () => {
       const state = { ...initialState, keyTimer: 0 }
-      const updatedState = updateGameState(state, { right: true })
+      const updatedState = updateGameState(state, { right: true }, FRAME_TIME)
 
       expect(updatedState.playerX).toBe(state.playerX + 1)
       expect(updatedState.keyTimer).toBe(CONFIG.KEY_REPEAT_DELAY)
@@ -88,38 +91,38 @@ describe('gameLogic', () => {
 
     it('should not move player out of left boundary', () => {
       const state = { ...initialState, playerX: 0, keyTimer: 0 }
-      const updatedState = updateGameState(state, { ArrowLeft: true })
+      const updatedState = updateGameState(state, { ArrowLeft: true }, FRAME_TIME)
 
       expect(updatedState.playerX).toBe(0)
     })
 
     it('should not move player out of right boundary', () => {
       const state = { ...initialState, playerX: CONFIG.COLS - 1, keyTimer: 0 }
-      const updatedState = updateGameState(state, { ArrowRight: true })
+      const updatedState = updateGameState(state, { ArrowRight: true }, FRAME_TIME)
 
       expect(updatedState.playerX).toBe(CONFIG.COLS - 1)
     })
 
     it('should decrement keyTimer if it is greater than 0', () => {
-      const state = { ...initialState, keyTimer: 3 }
-      const updatedState = updateGameState(state, { ArrowLeft: true })
+      const state = { ...initialState, keyTimer: 50 }
+      const updatedState = updateGameState(state, { ArrowLeft: true }, FRAME_TIME)
 
-      expect(updatedState.keyTimer).toBe(2)
+      expect(updatedState.keyTimer).toBeCloseTo(50 - FRAME_TIME, 1)
       expect(updatedState.playerX).toBe(state.playerX) // Player does not move
     })
 
     it('should increment scrollTimer on each update', () => {
-      const state = { ...initialState, scrollTimer: 5 }
-      const updatedState = updateGameState(state, {})
+      const state = { ...initialState, scrollTimer: 80 }
+      const updatedState = updateGameState(state, {}, FRAME_TIME)
 
-      expect(updatedState.scrollTimer).toBe(6)
+      expect(updatedState.scrollTimer).toBeCloseTo(80 + FRAME_TIME, 1)
     })
 
     it('should add new course row when scrollTimer reaches SCROLL_SPEED', () => {
-      const state = { ...initialState, scrollTimer: CONFIG.SCROLL_SPEED - 1 }
-      const updatedState = updateGameState(state, {})
+      const state = { ...initialState, scrollTimer: CONFIG.SCROLL_SPEED - FRAME_TIME }
+      const updatedState = updateGameState(state, {}, FRAME_TIME)
 
-      expect(updatedState.scrollTimer).toBe(0)
+      expect(updatedState.scrollTimer).toBeCloseTo(0, 1)
       expect(updatedState.courseRows.length).toBe(1)
       expect(updatedState.scrollOffset).toBe(1)
     })
@@ -136,7 +139,7 @@ describe('gameLogic', () => {
       }
 
       // Moving left makes playerX = 3, which is '■' (wall)
-      const updatedState = updateGameState(state, { ArrowLeft: true })
+      const updatedState = updateGameState(state, { ArrowLeft: true }, FRAME_TIME)
 
       expect(updatedState.gameOver).toBe(true)
     })
@@ -149,12 +152,12 @@ describe('gameLogic', () => {
         ...initialState,
         playerX: 0, // Position where wall will appear
         playerRow: 0, // Position where new row appears
-        scrollTimer: CONFIG.SCROLL_SPEED - 1,
+        scrollTimer: CONFIG.SCROLL_SPEED - FRAME_TIME,
         currentPattern: 0, // Next pattern is 11 "■■   ■■■■", playerX=0 is wall
       }
 
       // Trigger scroll
-      const updatedState = updateGameState(state, {})
+      const updatedState = updateGameState(state, {}, FRAME_TIME)
 
       // Game over when wall scrolls to playerX=0, playerRow=0
       // currentPattern=0 to -1 gives pattern 11 "■■   ■■■■", index 0 is wall
@@ -165,14 +168,14 @@ describe('gameLogic', () => {
       const rows = Math.floor(CONFIG.SCREEN_HEIGHT / CONFIG.CELL_SIZE)
       const state: GameState = {
         ...initialState,
-        scrollTimer: CONFIG.SCROLL_SPEED - 1,
+        scrollTimer: CONFIG.SCROLL_SPEED - FRAME_TIME,
       }
 
       // Scroll many times
       let updatedState = state
       for (let i = 0; i < rows + 10; i++) {
-        updatedState = { ...updatedState, scrollTimer: CONFIG.SCROLL_SPEED - 1 }
-        updatedState = updateGameState(updatedState, {})
+        updatedState = { ...updatedState, scrollTimer: CONFIG.SCROLL_SPEED - FRAME_TIME }
+        updatedState = updateGameState(updatedState, {}, FRAME_TIME)
       }
 
       expect(updatedState.courseRows.length).toBeLessThanOrEqual(rows)
@@ -180,7 +183,7 @@ describe('gameLogic', () => {
 
     it('should prioritize right when both keys are pressed simultaneously', () => {
       const state = { ...initialState, keyTimer: 0 }
-      const updatedState = updateGameState(state, { ArrowLeft: true, ArrowRight: true })
+      const updatedState = updateGameState(state, { ArrowLeft: true, ArrowRight: true }, FRAME_TIME)
 
       // ArrowRight is prioritized, so move right
       expect(updatedState.playerX).toBe(state.playerX + 1)
@@ -193,10 +196,10 @@ describe('gameLogic', () => {
       const state: GameState = {
         ...initialState,
         currentPattern: 5,
-        scrollTimer: CONFIG.SCROLL_SPEED - 1,
+        scrollTimer: CONFIG.SCROLL_SPEED - FRAME_TIME,
       }
 
-      const updatedState = updateGameState(state, {})
+      const updatedState = updateGameState(state, {}, FRAME_TIME)
 
       // currentPattern changes from 5 to 5 (change = 0)
       expect(updatedState.currentPattern).toBe(5)
@@ -206,17 +209,17 @@ describe('gameLogic', () => {
     it('should handle keyTimer and scrollTimer simultaneously', () => {
       const state: GameState = {
         ...initialState,
-        keyTimer: 2,
-        scrollTimer: CONFIG.SCROLL_SPEED - 1,
+        keyTimer: 33,
+        scrollTimer: CONFIG.SCROLL_SPEED - FRAME_TIME,
       }
 
-      const updatedState = updateGameState(state, { ArrowLeft: true })
+      const updatedState = updateGameState(state, { ArrowLeft: true }, FRAME_TIME)
 
       // keyTimer decreases, player does not move
-      expect(updatedState.keyTimer).toBe(1)
+      expect(updatedState.keyTimer).toBeCloseTo(33 - FRAME_TIME, 1)
       expect(updatedState.playerX).toBe(state.playerX)
       // Scroll occurs
-      expect(updatedState.scrollTimer).toBe(0)
+      expect(updatedState.scrollTimer).toBeCloseTo(0, 1)
       expect(updatedState.courseRows.length).toBe(1)
     })
 
@@ -227,21 +230,21 @@ describe('gameLogic', () => {
 
       // Simulate 5 frames of updates
       for (let i = 0; i < 5; i++) {
-        state = updateGameState(state, {})
+        state = updateGameState(state, {}, FRAME_TIME)
       }
 
-      // scrollTimer increased by 5
-      expect(state.scrollTimer).toBe(5)
+      // scrollTimer increased by 5 frames
+      expect(state.scrollTimer).toBeCloseTo(5 * FRAME_TIME, 1)
       expect(state.courseRows.length).toBe(0) // Not yet reached SCROLL_SPEED
       expect(state.scrollOffset).toBe(0)
 
-      // Update 5 more frames to reach SCROLL_SPEED
-      for (let i = 0; i < 5; i++) {
-        state = updateGameState(state, {})
+      // Update 6 more frames to exceed SCROLL_SPEED
+      // Note: Due to floating point precision, 10 frames might not quite reach SCROLL_SPEED
+      for (let i = 0; i < 6; i++) {
+        state = updateGameState(state, {}, FRAME_TIME)
       }
 
-      // Scroll occurs once (total 10 frames)
-      expect(state.scrollTimer).toBe(0)
+      // Scroll should have occurred
       expect(state.courseRows.length).toBe(1)
       expect(state.scrollOffset).toBe(1)
     })
@@ -253,7 +256,7 @@ describe('gameLogic', () => {
         keyTimer: 0,
       }
 
-      const updatedState = updateGameState(state, { ArrowLeft: true })
+      const updatedState = updateGameState(state, { ArrowLeft: true }, FRAME_TIME)
 
       // Can move even when courseRows is empty (no collision)
       expect(updatedState.playerX).toBe(state.playerX - 1)

@@ -20,7 +20,7 @@ describe('App', () => {
 
     // Mock requestAnimationFrame
     vi.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => {
-      setTimeout(cb, 0)
+      setTimeout(() => cb(performance.now()), 0)
       return 0
     })
 
