@@ -2,7 +2,7 @@
 
 TextDrive is a minimalist driving game where the entire course is drawn with ASCII blocks. Navigate your car (車) through the scrolling course by avoiding walls (■) and see how far you can go!
 
-**[Play Now](https://text-drive.vercel.app/)** | [How to Play](#-how-to-play) | [Development](#-getting-started)
+**[Play Now](https://text-drive.vercel.app/)** | [How to Play](#how-to-play) | [Development](#getting-started)
 
 ---
 
