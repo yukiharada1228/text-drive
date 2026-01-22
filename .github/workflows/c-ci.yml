@@ -1,10 +1,14 @@
-name: CI
+name: C CI
 
 on:
   push:
     branches: [main]
+    paths:
+      - 'textdrive-c/**'
   pull_request:
     branches: [main]
+    paths:
+      - 'textdrive-c/**'
 
 jobs:
   build-and-test:
@@ -21,7 +25,9 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y libncurses-dev
 
       - name: Build
+        working-directory: textdrive-c
         run: make
 
       - name: Run tests
+        working-directory: textdrive-c
         run: make test
