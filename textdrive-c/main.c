@@ -3,17 +3,28 @@
  *
  * Controls:
  *   Left/Right Arrow or A/D: Move car
+ *   M: Toggle AI mode (requires qtable.bin)
  *   R: Restart
  *   Q: Quit
+ *
+ * Usage:
+ *   ./textdrive       - Manual play
+ *   ./textdrive ai    - AI auto-play mode
  */
 
 #include <locale.h>
 #include <ncurses.h>
+#include <string.h>
 #include <sys/time.h>
 #include <time.h>
 #include <unistd.h>
 
 #include "game.h"
+#include "qlearning.h"
+
+static int ai_mode = 0;
+static Agent agent;
+static int agent_loaded = 0;
 
 static long getTimeMs(void) {
     struct timeval tv;
@@ -23,7 +34,8 @@ static long getTimeMs(void) {
 
 static void draw(Game *g) {
     clear();
-    mvprintw(0, 0, "Distance: %d", g->distance);
+    mvprintw(0, 0, "Distance: %d  %s", g->distance,
+             ai_mode ? "[AI MODE]" : "[MANUAL]");
 
     for (int y = 0; y < ROWS_COUNT; y++) {
         for (int x = 0; x < COLS_COUNT; x++) {
@@ -33,7 +45,11 @@ static void draw(Game *g) {
         }
     }
 
-    mvprintw(ROWS_COUNT + 3, 0, "[<-][->] Move  [R] Restart  [Q] Quit");
+    if (ai_mode) {
+        mvprintw(ROWS_COUNT + 3, 0, "[M] Manual  [R] Restart  [Q] Quit");
+    } else {
+        mvprintw(ROWS_COUNT + 3, 0, "[<-][->] Move  [M] AI  [R] Restart  [Q] Quit");
+    }
     refresh();
 }
 
@@ -54,20 +70,42 @@ static int handleInput(Game *g, int ch) {
         return 1;
     }
 
+    if (ch == 'm' || ch == 'M') {
+        if (!agent_loaded) {
+            if (agent_load(&agent, "qtable.bin") == 0) {
+                agent_loaded = 1;
+            }
+        }
+        if (agent_loaded) {
+            ai_mode = !ai_mode;
+        }
+        return 1;
+    }
+
     if (g->gameOver)
         return 1;
 
-    if (ch == KEY_LEFT || ch == 'a' || ch == 'A')
-        movePlayer(g, -1);
-    else if (ch == KEY_RIGHT || ch == 'd' || ch == 'D')
-        movePlayer(g, 1);
+    if (!ai_mode) {
+        if (ch == KEY_LEFT || ch == 'a' || ch == 'A')
+            movePlayer(g, -1);
+        else if (ch == KEY_RIGHT || ch == 'd' || ch == 'D')
+            movePlayer(g, 1);
+    }
 
     return 1;
 }
 
-int main(void) {
+int main(int argc, char *argv[]) {
     setlocale(LC_ALL, "");
     srand((unsigned)time(NULL));
+
+    /* Check for AI mode argument */
+    if (argc > 1 && strcmp(argv[1], "ai") == 0) {
+        if (agent_load(&agent, "qtable.bin") == 0) {
+            agent_loaded = 1;
+            ai_mode = 1;
+        }
+    }
 
     initscr();
     cbreak();
@@ -89,6 +127,12 @@ int main(void) {
         if (!game.gameOver) {
             long now = getTimeMs();
             if (now - lastScroll >= SCROLL_DELAY_MS) {
+                /* AI makes decision before scroll */
+                if (ai_mode && agent_loaded) {
+                    int state = get_state(&game);
+                    int action = get_best_action(&agent, state);
+                    do_action(&game, action);
+                }
                 scrollCourse(&game);
                 lastScroll = now;
             }
