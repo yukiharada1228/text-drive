@@ -5,17 +5,23 @@ CFLAGS = -Wall -Wextra -O2
 LDFLAGS = -lncurses
 
 TARGET = textdrive
-SRC = main.c
+SRC = main.c qlearning.c
 
 TEST_TARGET = test_game
 TEST_SRC = test_game.c
 
-.PHONY: all clean run test
+TRAIN_TARGET = train
+TRAIN_SRC = train.c qlearning.c
 
-all: $(TARGET)
+.PHONY: all clean run test run-train
 
-$(TARGET): $(SRC) game.h
+all: $(TARGET) $(TRAIN_TARGET)
+
+$(TARGET): $(SRC) game.h qlearning.h
 	$(CC) $(CFLAGS) -o $(TARGET) $(SRC) $(LDFLAGS)
+
+$(TRAIN_TARGET): $(TRAIN_SRC) game.h qlearning.h
+	$(CC) $(CFLAGS) -o $(TRAIN_TARGET) $(TRAIN_SRC) -lm
 
 $(TEST_TARGET): $(TEST_SRC) game.h
 	$(CC) $(CFLAGS) -o $(TEST_TARGET) $(TEST_SRC)
@@ -26,5 +32,8 @@ test: $(TEST_TARGET)
 run: $(TARGET)
 	./$(TARGET)
 
+run-train: $(TRAIN_TARGET)
+	./$(TRAIN_TARGET)
+
 clean:
-	rm -f $(TARGET) $(TEST_TARGET)
+	rm -f $(TARGET) $(TEST_TARGET) $(TRAIN_TARGET)
