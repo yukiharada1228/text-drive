@@ -40,10 +40,6 @@ int main(void) {
         /* ゲームを初期化 */
         Game game;
         initGame(&game);
-        for (int i = 0; i < ROWS_COUNT; i++) {
-            scrollCourse(&game);
-        }
-        game.distance = 0;
 
         /* 1ゲームをプレイ */
         for (int step = 0; step < MAX_STEPS; step++) {
