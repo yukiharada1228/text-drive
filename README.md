@@ -190,6 +190,7 @@ text-drive/
     │   ├── game.rs           # Game logic
     │   ├── qlearning.rs      # Q-learning AI
     │   └── bin/              # Executables
+    ├── tests/                # Test files
     └── Cargo.toml            # Rust dependencies
 ```
 

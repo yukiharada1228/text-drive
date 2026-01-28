@@ -1,6 +1,6 @@
 # TextDrive - Rust Version
 
-A Rust reimplementation of the C version of TextDrive. Features AI autonomous driving using Q-learning.
+Terminal-based version of TextDrive featuring AI autonomous driving using Q-learning.
 
 ## Features
 
@@ -21,6 +21,10 @@ textdrive-rust/
 │   └── bin/
 │       ├── textdrive.rs # Main game
 │       └── train.rs     # Training program
+├── tests/               # Test files
+│   ├── game_test.rs     # Game logic tests
+│   ├── qlearning_test.rs # Q-learning tests
+│   └── error_test.rs    # Error handling tests
 ├── Cargo.toml
 └── README.md
 ```
