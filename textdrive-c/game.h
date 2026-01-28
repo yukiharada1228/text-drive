@@ -57,7 +57,13 @@ static inline void scrollCourse(Game *g) {
 }
 
 static inline int hasCollision(Game *g) {
-    return PLAYER_ROW < g->rowCount && g->rows[PLAYER_ROW][g->playerX] == '#';
+    /* Player row must be filled before collision can occur */
+    if (PLAYER_ROW >= g->rowCount) {
+        return 0;
+    }
+
+    /* Check if player position is on a wall */
+    return g->rows[PLAYER_ROW][g->playerX] == '#';
 }
 
 static inline int movePlayer(Game *g, int direction) {
