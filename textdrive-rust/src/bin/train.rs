@@ -10,7 +10,7 @@ fn main() {
     let mut agent = Agent::new();
     let mut stats = TrainingStats::new(RECENT_WINDOW_SIZE);
 
-    println!("=== Q学習スタート ===\n");
+    println!("=== Q-Learning Start ===\n");
 
     for episode in 1..=NUM_EPISODES {
         let final_distance = run_episode(&mut agent);
@@ -23,13 +23,13 @@ fn main() {
         }
     }
 
-    println!("\n=== 学習完了 ===");
-    println!("最高スコア: {}", agent.best_score);
+    println!("\n=== Training Complete ===");
+    println!("Best Score: {}", agent.best_score);
 
     agent
         .save("qtable.bin")
-        .expect("データの保存に失敗しました");
-    println!("データを保存しました");
+        .expect("Failed to save data");
+    println!("Data saved successfully");
 }
 
 fn run_episode(agent: &mut Agent) -> i32 {
