@@ -51,7 +51,7 @@ jobs:
 
       - name: Install dependencies (Ubuntu)
         if: runner.os == 'Linux'
-        run: sudo apt-get update && sudo apt-get install -y libncurses-dev
+        run: sudo apt-get update && sudo apt-get install -y libncursesw5-dev
 
       - name: Check formatting
         working-directory: textdrive-rust
@@ -84,7 +84,7 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
 
       - name: Install dependencies
-        run: sudo apt-get update && sudo apt-get install -y libncurses-dev
+        run: sudo apt-get update && sudo apt-get install -y libncursesw5-dev
 
       - name: Install cargo-tarpaulin
         run: cargo install cargo-tarpaulin
