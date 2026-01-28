@@ -155,9 +155,9 @@ pub fn get_best_action(agent: &Agent, state: usize) -> Action {
 
 /// Chooses an action using epsilon-greedy strategy
 pub fn choose_action(agent: &Agent, state: usize) -> Action {
-    let mut rng = rand::thread_rng();
-    if rng.gen::<f64>() < agent.epsilon {
-        let action_idx = rng.gen_range(0..NUM_ACTIONS);
+    let mut rng = rand::rng();
+    if rng.random::<f64>() < agent.epsilon {
+        let action_idx = rng.random_range(0..NUM_ACTIONS);
         Action::from_usize(action_idx).unwrap_or(Action::Stay)
     } else {
         get_best_action(agent, state)

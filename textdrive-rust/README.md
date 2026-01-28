@@ -1,107 +1,107 @@
-# TextDrive - Rust版
+# TextDrive - Rust Version
 
-C版のTextDriveをRustで再実装したプロジェクトです。Q学習を使用したAIによる自動運転機能を備えています。
+A Rust reimplementation of the C version of TextDrive. Features AI autonomous driving using Q-learning.
 
-## 機能
+## Features
 
-- ASCII文字による縦スクロール型ドライビングゲーム
-- 手動プレイモード
-- Q学習AIによる自動プレイモード
-- AIの学習・訓練機能
+- ASCII character-based vertical scrolling driving game
+- Manual play mode
+- AI auto-play mode using Q-learning
+- AI training functionality
 
-## プロジェクト構成
+## Project Structure
 
 ```
 textdrive-rust/
 ├── src/
-│   ├── lib.rs           # ライブラリのエントリーポイント
-│   ├── game.rs          # ゲームロジック
-│   ├── qlearning.rs     # Q学習の実装
-│   ├── error.rs         # カスタムエラー型
+│   ├── lib.rs           # Library entry point
+│   ├── game.rs          # Game logic
+│   ├── qlearning.rs     # Q-learning implementation
+│   ├── error.rs         # Custom error types
 │   └── bin/
-│       ├── textdrive.rs # メインゲーム
-│       └── train.rs     # 学習プログラム
+│       ├── textdrive.rs # Main game
+│       └── train.rs     # Training program
 ├── Cargo.toml
 └── README.md
 ```
 
-## ビルド
+## Build
 
 ```bash
 cargo build --release
 ```
 
-## 使用方法
+## Usage
 
-### AIの訓練
+### Train the AI
 
 ```bash
 cargo run --release --bin train
 ```
 
-50,000エピソードを学習し、`qtable.bin` ファイルにQ値を保存します。
+Trains for 50,000 episodes and saves Q-values to `qtable.bin`.
 
-### ゲームをプレイ
+### Play the Game
 
-#### 手動プレイ
+#### Manual Play
 ```bash
 cargo run --release --bin textdrive
 ```
 
-#### AIプレイ
+#### AI Play
 ```bash
 cargo run --release --bin textdrive ai
 ```
 
-## 操作方法
+## Controls
 
-- **左右矢印キー** または **A/D**: プレイヤーを左右に移動
-- **M**: AIモードと手動モードを切り替え（qtable.binが必要）
-- **R**: ゲームをリスタート
-- **Q**: 終了
+- **Arrow Keys** or **A/D**: Move player left/right
+- **M**: Toggle between AI mode and manual mode (requires qtable.bin)
+- **R**: Restart game
+- **Q**: Quit
 
-## アーキテクチャの特徴
+## Architecture Highlights
 
-### 型安全性
+### Type Safety
 
-- `Cell` enum: セルの状態（空 or 壁）を型安全に表現
-- `Direction` enum: 移動方向を型安全に表現
-- `Action` enum: AI の行動を型安全に表現
+- `Cell` enum: Type-safe representation of cell states (empty or wall)
+- `Direction` enum: Type-safe representation of movement direction
+- `Action` enum: Type-safe representation of AI actions
 
-### エラーハンドリング
+### Error Handling
 
-- カスタム `GameError` 型による明確なエラーハンドリング
-- `Result<T>` 型エイリアスの使用
+- Clear error handling with custom `GameError` type
+- Use of `Result<T>` type alias
 
-### モジュラー設計
+### Modular Design
 
-- ゲームロジックとQ学習の実装を分離
-- 各モジュールは独立してテスト可能
+- Separation of game logic and Q-learning implementation
+- Each module can be tested independently
 
-### ドキュメント
+### Documentation
 
-- 全ての公開API にドキュメントコメントを付与
-- `cargo doc --open` でドキュメントを生成・閲覧可能
+- Documentation comments on all public APIs
+- Generate and view docs with `cargo doc --open`
 
-## Q学習パラメータ
+## Q-Learning Parameters
 
-- **学習率 (α)**: 0.2
-- **割引率 (γ)**: 0.95
-- **ε減衰率**: 0.9995
-- **状態空間サイズ**: 32,768 (2^15)
-- **行動数**: 3 (左, 待機, 右)
-- **視野**: プレイヤーの前方3行、左右2列
+- **Learning Rate (α)**: 0.2
+- **Discount Factor (γ)**: 0.95
+- **ε Decay Rate**: 0.9995
+- **State Space Size**: 32,768 (2^15)
+- **Number of Actions**: 3 (left, stay, right)
+- **Vision**: 3 rows ahead, 2 columns left/right of player
 
-## 報酬設計
+## Reward Design
 
-- **生存**: +1
-- **衝突**: -100
+- **Survival**: +1
+- **Collision**: -100
 
-## 依存関係
+## Dependencies
 
-- `rand`: 乱数生成
-- `pancurses`: ターミナルUI
+- `rand`: Random number generation
+- `pancurses`: Terminal UI
 
-## ライセンス
+## License
 
-このプロジェクトはオープンソースです。
+This project is licensed under the MIT License - see the [LICENSE](../LICENSE) file for details.

@@ -118,8 +118,8 @@ impl Game {
     }
 
     fn update_pattern(&mut self) {
-        let mut rng = rand::thread_rng();
-        let change = rng.gen_range(PATTERN_CHANGE_MIN..=PATTERN_CHANGE_MAX);
+        let mut rng = rand::rng();
+        let change = rng.random_range(PATTERN_CHANGE_MIN..=PATTERN_CHANGE_MAX);
         let pattern_count = COURSE_PATTERNS.len() as i32;
         self.pattern = ((self.pattern as i32 + change + pattern_count) % pattern_count) as usize;
     }
