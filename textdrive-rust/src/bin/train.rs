@@ -26,9 +26,7 @@ fn main() {
     println!("\n=== Training Complete ===");
     println!("Best Score: {}", agent.best_score);
 
-    agent
-        .save("qtable.bin")
-        .expect("Failed to save data");
+    agent.save("qtable.bin").expect("Failed to save data");
     println!("Data saved successfully");
 }
 
