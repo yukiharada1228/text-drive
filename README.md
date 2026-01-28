@@ -12,7 +12,6 @@ TextDrive is a minimalist driving game where the entire course is drawn with ASC
 |---------|-------------|-----------|
 | [React (Web)](#react-version) | Browser-based version with React | `textdrive-react/` |
 | [Rust (Terminal)](#rust-version) | Terminal-based version with Q-learning AI | `textdrive-rust/` |
-| [C (Terminal)](#c-version) | Terminal-based version using ncurses | `textdrive-c/` |
 
 ---
 
@@ -66,23 +65,6 @@ See [textdrive-rust/README.md](textdrive-rust/README.md) for more details.
 
 ---
 
-## C Version
-
-### Quick Start
-
-```bash
-# 1. Clone and navigate to the project
-git clone https://github.com/yukiharada1228/text-drive.git
-cd text-drive/textdrive-c
-
-# 2. Build and run
-make run
-```
-
-> **Note:** Requires `gcc` and `ncurses` library. On macOS, ncurses is pre-installed. On Ubuntu/Debian: `sudo apt install libncurses-dev`
-
----
-
 ## How to Play
 
 **Goal:** Drive your car (車) as far as possible without hitting the walls (■).
@@ -102,15 +84,6 @@ make run
 | Move Left | `←` Arrow or `A` |
 | Move Right | `→` Arrow or `D` |
 | Toggle AI/Manual | `M` |
-| Restart | `R` |
-| Quit | `Q` |
-
-### C Version Controls
-
-| Control | Keys |
-|---------|------|
-| Move Left | `←` Arrow or `A` |
-| Move Right | `→` Arrow or `D` |
 | Restart | `R` |
 | Quit | `Q` |
 
@@ -166,33 +139,6 @@ cargo build --release
 | `cargo run --release --bin train` | Train the AI |
 | `cargo doc --open` | View documentation |
 
-### C Version
-
-#### Prerequisites
-
-- **gcc** - C compiler
-- **ncurses** - Terminal UI library
-  - macOS: Pre-installed
-  - Ubuntu/Debian: `sudo apt install libncurses-dev`
-  - Fedora: `sudo dnf install ncurses-devel`
-
-#### Installation
-
-```bash
-git clone https://github.com/yukiharada1228/text-drive.git
-cd text-drive/textdrive-c
-make run
-```
-
-#### Available Make Commands
-
-| Command | Description |
-|---------|-------------|
-| `make` | Build the game |
-| `make run` | Build and run |
-| `make test` | Run unit tests |
-| `make clean` | Remove build files |
-
 ---
 
 ## Features
@@ -200,7 +146,7 @@ make run
 - **ASCII Art Graphics** - Courses made entirely with the `■` character
 - **Simple Controls** - Arrow keys to move
 - **Distance Scoring** - Track how far you can go
-- **Three Versions** - Play in browser (React), terminal with AI (Rust), or terminal (C)
+- **Two Versions** - Play in browser (React) or terminal with AI (Rust)
 - **Q-Learning AI** - Watch an AI learn to drive (Rust version)
 
 ---
@@ -225,14 +171,6 @@ make run
 | UI Library | pancurses |
 | AI | Q-learning |
 
-### C Version
-
-| Category | Technology |
-|----------|------------|
-| Language | C |
-| UI Library | ncurses |
-| Build Tool | Make |
-
 ---
 
 ## Project Structure
@@ -247,18 +185,12 @@ text-drive/
 │   │   └── App.tsx           # Main application
 │   └── public/               # Static assets
 │
-├── textdrive-rust/           # Rust (Terminal) version
-│   ├── src/
-│   │   ├── game.rs           # Game logic
-│   │   ├── qlearning.rs      # Q-learning AI
-│   │   └── bin/              # Executables
-│   └── Cargo.toml            # Rust dependencies
-│
-└── textdrive-c/              # C (Terminal) version
-    ├── main.c                # Main game loop and rendering
-    ├── game.h                # Game logic (header-only)
-    ├── test_game.c           # Unit tests
-    └── Makefile              # Build configuration
+└── textdrive-rust/           # Rust (Terminal) version
+    ├── src/
+    │   ├── game.rs           # Game logic
+    │   ├── qlearning.rs      # Q-learning AI
+    │   └── bin/              # Executables
+    └── Cargo.toml            # Rust dependencies
 ```
 
 ---
