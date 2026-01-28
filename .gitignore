@@ -8,3 +8,15 @@ wheels/
 
 # Virtual environments
 .venv
+
+# C build artifacts
+textdrive-c/textdrive
+textdrive-c/train
+textdrive-c/test_game
+textdrive-c/*.o
+
+# Rust build artifacts
+textdrive-rust/target/
+
+# Q-learning data
+qtable.bin

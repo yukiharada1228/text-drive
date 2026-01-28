@@ -1,0 +1,16 @@
+[package]
+name = "textdrive"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+rand = "0.8"
+pancurses = "0.17"
+
+[[bin]]
+name = "textdrive"
+path = "src/bin/textdrive.rs"
+
+[[bin]]
+name = "train"
+path = "src/bin/train.rs"

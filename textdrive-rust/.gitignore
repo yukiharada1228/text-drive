@@ -1,0 +1,13 @@
+# Rust build artifacts
+/target/
+Cargo.lock
+
+# Q-learning data
+qtable.bin
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
